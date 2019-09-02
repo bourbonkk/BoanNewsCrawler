@@ -2,14 +2,7 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="Always" serverName="root@211.212.151.174:1604">
     <serverData>
-      <paths name="root@192.168.2.143:22 (1)">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="root@192.168.2.150:22">
+      <paths name="redteam">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
@@ -19,7 +12,7 @@
       <paths name="root@211.212.151.174:1604">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/pycharm_project_711" local="$PROJECT_DIR$" />
+            <mapping deploy="/tmp/pycharm_project_595" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
