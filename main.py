@@ -1,20 +1,13 @@
 # coding=euc-kr
-
-
-# https://m.boannews.com/html/Sub_Menu.html?mtype=2&tab_type=5     취약점 경고 및 보안 업데이트
-# https://m.boannews.com/html/Sub_Menu.html?mtype=3&tab_type=6    정책
-
-# https://m.boannews.com/html/Main_Menu.html?mkind=1     security
-# https://m.boannews.com/html/Main_Menu.html?mkind=3     defense
-
-# 915048180:AAFQXGGq_8ZIrksva2RA2M3v9dOeQZmSPgQ         토큰값
-from collections import OrderedDict
+import os
 
 import requests
+import telegram
 from bs4 import BeautifulSoup
+import schedule
 
 
-def crawler(url):
+def crawler(url, key):
     news_link = []
     reponse = requests.get(url)
     html = reponse.text
@@ -22,50 +15,59 @@ def crawler(url):
     url = '/media/view.asp'
     idx = 'idx='
     kind = 'kind'
-    page = 'page'
 
-    print(soup.contents.__len__())
     for link in soup.find_all('a', href=True):
         notices_link = link['href']
-        # print(notices_link)
 
-        # for ahref in notices_link:
-        # print(ahref.contains('idx'))
         if notices_link.find(url) != -1 and notices_link.find(idx) != -1 and notices_link.find(kind) != -1:
-            # news_link = notices_link
+            split_notices_link = notices_link.split('&')[0]
 
-            notices_link.split()
-            if notices_link not in news_link:
-                news_link.append(notices_link)
-    #
-    # # if link.__contains__('a href'):
-    for printer in news_link:
-
-        print(printer)
-    # print(type(news_link))
+            if split_notices_link not in news_link and 'idx' in split_notices_link:
+                news_link.append(split_notices_link)
+    newlink = compareLink(news_link, key)
+    chatBot(newlink)
 
 
-# link = soup.select_one('#news_area')
-# print(link)
+def compareLink(newslink, key):
+    newlink = []
+    if os.path.exists('compare' + '_' + str(key) + '.txt'):
+        with open('compare' + '_' + str(key) + '.txt') as f:
+            link_list = f.readlines()
+            for printer in newslink:
+                if printer + '\n' in link_list:
+                    newlink.append(printer)
+    else:
+        for printer in newslink:
+            newlink.append(printer)
+
+    with open('compare' + '_' + str(key) + '.txt', 'a') as f:
+        for tempwrite in newlink:
+            print(tempwrite)
+            f.write(tempwrite + '\n')
+    return newlink
 
 
-# for link in soup.find_all('a'):
-#     # print(link)
-#     notices_link = link['href']
-#     if 'detail.html' in notices_link:
-#         news_link.append(notices_link)
-# news_link = list(OrderedDict.fromkeys(news_link))
-# print(news_link)
+def executeCrawler(urls):
+    for key in urls:
+        crawler(urls.get(key), key)
 
 
-def match_class(target):
-    def do_match(tag):
-        classes = tag.get('class', [])
-        return all(c in classes for c in target)
-
-    return do_match
+def chatBot(newlink):
+    if newlink.__len__() != 0:
+        bot = telegram.Bot(token='915048180:AAFQXGGq_8ZIrksva2RA2M3v9dOeQZmSPgQ')
+        chat_id = bot.getUpdates()[-1].message.chat.id
+        bot.sendMessage(chat_id=chat_id, text='새 글이 올라왔어요!')
 
 
 if __name__ == "__main__":
-    print("test")
-    crawler('https://www.boannews.com/media/list.asp?mkind=1')
+    # https://www.boannews.com/media/s_list.asp?skind=5     취약점 경고 및 보안 업데이트
+    # https://www.boannews.com/media/s_list.asp?skind=6     정책
+    # https://www.boannews.com/media/list.asp?mkind=1     security
+    # https://www.boannews.com/media/list.asp?mkind=3    defense
+
+    urls = {1: 'https://www.boannews.com/media/s_list.asp?skind=5',
+            2: 'https://www.boannews.com/media/s_list.asp?skind=6',
+            3: 'https://www.boannews.com/media/list.asp?mkind=1',
+            4: 'https://www.boannews.com/media/list.asp?mkind=3'}
+    executeCrawler(urls)
+    # schedule.every(15).minutes.do(executeCrawler(urls))
