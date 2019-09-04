@@ -25,7 +25,7 @@ def crawler(url, key):
             if split_notices_link not in news_link and 'idx' in split_notices_link:
                 news_link.append(split_notices_link)
     newlink = compareLink(news_link, key)
-    chatBot(newlink)
+    chatBot(newlink, key)
 
 
 def compareLink(newslink, key):
@@ -34,7 +34,7 @@ def compareLink(newslink, key):
         with open('compare' + '_' + str(key) + '.txt') as f:
             link_list = f.readlines()
             for printer in newslink:
-                if printer + '\n' in link_list:
+                if printer + '\n' not in link_list:
                     newlink.append(printer)
     else:
         for printer in newslink:
@@ -52,11 +52,24 @@ def executeCrawler(urls):
         crawler(urls.get(key), key)
 
 
-def chatBot(newlink):
+def chatBot(newlink, key):
+    if key == 1:
+        category = '취약점 경고 및 보안 업데이트'
+    elif key == 2:
+        category = '정책'
+    elif key == 3:
+        category = 'security'
+    else:
+        category = 'defense'
+
     if newlink.__len__() != 0:
-        bot = telegram.Bot(token='915048180:AAFQXGGq_8ZIrksva2RA2M3v9dOeQZmSPgQ')
-        chat_id = bot.getUpdates()[-1].message.chat.id
-        bot.sendMessage(chat_id=chat_id, text='새 글이 올라왔어요!')
+        bot = telegram.Bot('TOKEN')
+        chat_id = bot.getUpdates()[0].message.chat.id
+        for newlisk_list in newlink:
+            bot.sendMessage(
+                chat_id=chat_id, text='★보안뉴스\n카테고리 : '
+                                      '{category}\nURL : {URL}'.format(category=category,
+                                                                       URL='\nhttps://www.boannews.com' + newlisk_list))
 
 
 if __name__ == "__main__":
