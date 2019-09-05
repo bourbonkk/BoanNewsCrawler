@@ -4,7 +4,6 @@ import os
 import requests
 import telegram
 from bs4 import BeautifulSoup
-import schedule
 
 
 def crawler(url, key):
@@ -30,8 +29,8 @@ def crawler(url, key):
 
 def compareLink(newslink, key):
     newlink = []
-    if os.path.exists('compare' + '_' + str(key) + '.txt'):
-        with open('compare' + '_' + str(key) + '.txt') as f:
+    if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + '/compare' + '_' + str(key) + '.txt'):
+        with open(os.path.dirname(os.path.abspath(__file__)) + '/compare' + '_' + str(key) + '.txt') as f:
             link_list = f.readlines()
             for printer in newslink:
                 if printer + '\n' not in link_list:
@@ -40,7 +39,7 @@ def compareLink(newslink, key):
         for printer in newslink:
             newlink.append(printer)
 
-    with open('compare' + '_' + str(key) + '.txt', 'a') as f:
+    with open(os.path.dirname(os.path.abspath(__file__)) + '/compare' + '_' + str(key) + '.txt', 'a') as f:
         for tempwrite in newlink:
             print(tempwrite)
             f.write(tempwrite + '\n')
@@ -64,7 +63,7 @@ def chatBot(newlink, key):
 
     if newlink.__len__() != 0:
         bot = telegram.Bot('TOKEN')
-        chat_id = bot.getUpdates()[0].message.chat.id
+        chat_id = 'your chat_id'
         for newlisk_list in newlink:
             bot.sendMessage(
                 chat_id=chat_id, text='★보안뉴스\n카테고리 : '
@@ -83,4 +82,3 @@ if __name__ == "__main__":
             3: 'https://www.boannews.com/media/list.asp?mkind=1',
             4: 'https://www.boannews.com/media/list.asp?mkind=3'}
     executeCrawler(urls)
-    # schedule.every(15).minutes.do(executeCrawler(urls))
