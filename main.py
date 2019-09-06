@@ -23,15 +23,14 @@ def crawler(url, key):
 
             if split_notices_link not in news_link and 'idx' in split_notices_link:
                 news_link.append(split_notices_link)
-    newlink = compareLink(news_link, key)
-    news_link.clear()
+    newlink = compareLink(news_link)
     chatBot(newlink, key)
 
 
-def compareLink(newslink, key):
+def compareLink(newslink):
     newlink = []
-    if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + '/compare' + '_' + str(key) + '.txt'):
-        with open(os.path.dirname(os.path.abspath(__file__)) + '/compare' + '_' + str(key) + '.txt') as f:
+    if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + '/compare.txt'):
+        with open(os.path.dirname(os.path.abspath(__file__)) + '/compare.txt') as f:
             link_list = f.readlines()
             for printer in newslink:
                 if printer + '\n' not in link_list:
@@ -40,7 +39,7 @@ def compareLink(newslink, key):
         for printer in newslink:
             newlink.append(printer)
 
-    with open(os.path.dirname(os.path.abspath(__file__)) + '/compare' + '_' + str(key) + '.txt', 'a') as f:
+    with open(os.path.dirname(os.path.abspath(__file__)) + '/compare.txt', 'a') as f:
         for tempwrite in newlink:
             print(tempwrite)
             f.write(tempwrite + '\n')
