@@ -24,6 +24,7 @@ def crawler(url, key):
             if split_notices_link not in news_link and 'idx' in split_notices_link:
                 news_link.append(split_notices_link)
     newlink = compareLink(news_link, key)
+    news_link.clear()
     chatBot(newlink, key)
 
 
